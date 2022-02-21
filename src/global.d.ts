@@ -6,3 +6,5 @@ declare module 'express-serve-static-core' {
         user?: IReqUser
     }
 }
+
+declare module 'query-to-mongo'

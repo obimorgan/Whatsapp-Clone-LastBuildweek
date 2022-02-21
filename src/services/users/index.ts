@@ -1,7 +1,7 @@
 import e from 'express'
 import express, { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
-import { provideTokens } from '../../auth/functions'
+import { provideTokens, verifyJWTsAndRegenerate } from '../../auth/functions'
 import { cloudinary, parser } from '../../utils/cloudinary'
 import UserModel from './schema'
 
@@ -36,3 +36,17 @@ usersRouter.post('/login', async (req: Request, res: Response, next: NextFunctio
         next(error)
     }
 })
+
+usersRouter.post('/refreshToken', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { currentRefreshJWT } = req.body
+        const { accessJWT, refreshJWT } = await verifyJWTsAndRegenerate(currentRefreshJWT)
+        res.send({ accessJWT, refreshJWT })
+    } catch (error) {
+        next(error)
+    }
+})
+
+
+
+export default usersRouter
