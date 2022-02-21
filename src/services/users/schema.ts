@@ -51,5 +51,5 @@ UserSchema.statics.authenticate = async function (email, plainPW) {
     }
 }
 
-
-export default model<IUser, IUserModel>('User', UserSchema)
+const UserModel = model<IUser, IUserModel>('User', UserSchema)
+export default UserModel

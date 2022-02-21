@@ -8,5 +8,5 @@ const contactSchema = new Schema<IContact>({
         ref: "Conversation"
     }
 })
-
-export default model("Contact", contactSchema)
+const contactModel = model("Contact", contactSchema)
+export default contactModel

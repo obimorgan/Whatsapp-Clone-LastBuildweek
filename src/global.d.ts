@@ -7,4 +7,10 @@ declare module 'express-serve-static-core' {
     }
 }
 
+namespace Express {
+    interface Request {
+        image?: string
+    }
+}
+
 declare module 'query-to-mongo'
