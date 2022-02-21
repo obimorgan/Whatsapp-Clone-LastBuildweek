@@ -1,0 +1,29 @@
+import { Document, Model } from 'mongoose'
+
+export interface IUser extends Document {
+    _id: string,
+    username: string
+    email: string
+    password: string
+    firstName: string
+    lastName: string
+    avatar: string
+    refreshJWTs: string[]
+    filename: string,
+}
+
+export interface IUserModel extends Model<IUser> {
+    authenticate(email: string, plainPW: string): IUser | null
+}
+
+export interface IJWTPayload {
+    _id: string,
+    email: string
+}
+
+export interface IReqUser {
+    tokens: {
+        accessJWT: string
+        refreshJWT: string
+    }
+}
