@@ -48,6 +48,9 @@ export const verifyJWTsAndRegenerate = async (currentRefreshJWT: string) => {
         if (!user) throw createHttpError(404, `User with id ${payload._id} does not exist.`)
         if (user.refreshJWTs.includes(currentRefreshJWT)) {
             const { accessJWT, refreshJWT } = await provideTokens(user)
+            const newRefreshTokens = user.refreshJWTs.filter(token => token !== currentRefreshJWT)
+            user.refreshJWTs = newRefreshTokens
+            await user.save()
             return { accessJWT, refreshJWT }
         } else {
             throw createHttpError(401, 'Invalid refresh token.')

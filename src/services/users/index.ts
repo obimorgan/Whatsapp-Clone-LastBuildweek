@@ -47,6 +47,4 @@ usersRouter.post('/refreshToken', async (req: Request, res: Response, next: Next
     }
 })
 
-
-
 export default usersRouter
