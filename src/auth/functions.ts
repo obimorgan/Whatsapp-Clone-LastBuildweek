@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
-import UserModel from '../services/users/schema'
+import UserModel from '../Services/users/schema'
 import { IJWTPayload, IUser } from '../users'
 
 const { JWT_SECRET_KEY, JWT_REFRESH_SECRET_KEY } = process.env

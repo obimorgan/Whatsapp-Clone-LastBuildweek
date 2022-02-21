@@ -3,7 +3,7 @@ import express, { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import { provideTokens } from '../../auth/functions'
 import { cloudinary, parser } from '../../utils/cloudinary'
-import UserModel from '../users/schema'
+import UserModel from './schema'
 
 const usersRouter = express.Router()
 
