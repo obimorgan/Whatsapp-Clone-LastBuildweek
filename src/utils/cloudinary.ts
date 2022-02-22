@@ -14,7 +14,7 @@ const cloudinaryStorage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'strive-whatsapp-avatar',
-    } as {folder: string}
+    } as { folder: string }
 });
 
 const parser = multer({ storage: cloudinaryStorage })

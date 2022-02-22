@@ -6,7 +6,6 @@ const { Schema, model } = mongoose
 
 const UserSchema = new Schema<IUser>(
     {
-        _id: { type: String },
         username: { type: String, required: true },
         email: { type: String },
         password: { type: String },

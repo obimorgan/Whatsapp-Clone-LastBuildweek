@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken'
 import UserModel from '../Services/users/schema'
 import { IJWTPayload, IUser } from '../users'
 
+process.env.TS_NODE_DEV && require("dotenv").config()
+
 const { JWT_SECRET_KEY, JWT_REFRESH_SECRET_KEY } = process.env
 
 const generateJWT = (payload: IJWTPayload): Promise<string> => {
@@ -48,6 +50,9 @@ export const verifyJWTsAndRegenerate = async (currentRefreshJWT: string) => {
         if (!user) throw createHttpError(404, `User with id ${payload._id} does not exist.`)
         if (user.refreshJWTs.includes(currentRefreshJWT)) {
             const { accessJWT, refreshJWT } = await provideTokens(user)
+            const newRefreshTokens = user.refreshJWTs.filter(token => token !== currentRefreshJWT)
+            user.refreshJWTs = newRefreshTokens
+            await user.save()
             return { accessJWT, refreshJWT }
         } else {
             throw createHttpError(401, 'Invalid refresh token.')
