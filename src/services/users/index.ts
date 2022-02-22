@@ -29,7 +29,9 @@ usersRouter.post('/login', async (req: Request, res: Response, next: NextFunctio
         const user = await UserModel.authenticate(email, password)
         if (user) {
             const { accessJWT, refreshJWT } = await provideTokens(user)
-            res.send({ accessJWT, refreshJWT })
+            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: false })
+            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: false })
+            res.send()
         } else {
             next(createHttpError(401, 'Invalid credentials.'))
         }
@@ -40,9 +42,11 @@ usersRouter.post('/login', async (req: Request, res: Response, next: NextFunctio
 
 usersRouter.post('/refreshToken', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { currentRefreshJWT } = req.body
-        const { accessJWT, refreshJWT } = await verifyJWTsAndRegenerate(currentRefreshJWT)
-        res.send({ accessJWT, refreshJWT })
+        const { refreshToken } = req.cookies
+        const { accessJWT, refreshJWT } = await verifyJWTsAndRegenerate(refreshToken)
+        res.cookie('accessToken', accessJWT, { httpOnly: true, secure: false })
+        res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: false })
+        res.send()
     } catch (error) {
         next(error)
     }

@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken'
 import UserModel from '../Services/users/schema'
 import { IJWTPayload, IUser } from '../users'
 
+process.env.TS_NODE_DEV && require("dotenv").config()
+
 const { JWT_SECRET_KEY, JWT_REFRESH_SECRET_KEY } = process.env
 
 const generateJWT = (payload: IJWTPayload): Promise<string> => {
