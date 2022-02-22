@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import { provideTokens, verifyJWTsAndRegenerate } from '../../auth/functions'
-import { JWTAuth } from '../../Middlewares/JWTAuth'
+import { JWTAuth } from '../../middlewares/JWTAuth'
 import { cloudinary, parser } from '../../utils/cloudinary'
 import UserModel from './schema'
 
