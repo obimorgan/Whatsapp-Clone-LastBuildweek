@@ -8,7 +8,7 @@ contactRouter.post('/', async (req: Request, res: Response, next: NextFunction) 
     try {
         const newContact = await new contactModel(req.body).save()
         res.status(201).send(newContact)
-    } catch (error) {   
+    } catch (error) {
         console.log(error)
         next(error)
     }
@@ -17,7 +17,7 @@ contactRouter.post('/', async (req: Request, res: Response, next: NextFunction) 
 contactRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const contacts = await contactModel.find()
-        if(contacts)
+        if (contacts)
             res.send(contacts)
         else {
             return next(createHttpError(404, 'Could not find chats'))
@@ -30,7 +30,7 @@ contactRouter.get('/', async (req: Request, res: Response, next: NextFunction) =
 contactRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const conatacts = await contactModel.findByIdAndDelete(req.params.id,)
-        if(conatacts)
+        if (conatacts)
             res.send()
         else {
             return next(createHttpError(404, 'Could not find contact'))
