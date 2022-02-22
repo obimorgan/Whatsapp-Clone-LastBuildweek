@@ -10,15 +10,15 @@ const httpServer = createServer(server)
 const io = new Server(httpServer, {})
 
 io.on('connection', (socket) => {
-  socket.on('setRecipient', ({ conversationId }) => {
-    socket.join(conversationId)
-  })
   socket.on('sendMessage', ({ messageContent, conversationId }) => {
     try {
       socket.to(conversationId).emit('message', messageContent)
     } catch (error) {
       console.log(error)
     }
+  })
+  socket.on('joinGroupChat', ({ groupId }) => {
+    socket.join(groupId)
   })
   socket.on('disconnect', () => {
     io.disconnectSockets()
