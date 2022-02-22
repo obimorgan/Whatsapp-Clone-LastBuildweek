@@ -1,13 +1,10 @@
 import {Types} from 'mongoose'
 
 interface IConversation {
+	sender: Types.ObjectId
 	image?: string
-	content?: string
+	text?: string
 	_id: string
-}
-
-interface IContact {
-	_id: string
-	name: string
-	conversation: Types.ObjectId
+	createdAt: date
+	updatedAt: date
 }

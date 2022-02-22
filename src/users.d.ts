@@ -8,6 +8,7 @@ export interface IUser extends Document {
     firstName: string
     lastName: string
     contacts: Types.ObjectId[]
+    conversations: Types.ObjectId[]
     avatar: string
     refreshJWTs: string[]
     filename: string

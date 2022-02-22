@@ -113,4 +113,17 @@ usersRouter.delete('/me', JWTAuth, async (req: Request, res: Response, next: Nex
     }
 })
 
+usersRouter.post('/contact', JWTAuth, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = await UserModel.findByIdAndUpdate(req.payload?._id, {
+            $push: { contacts: req.body.contactId }
+        }, { new: true, runValidators: true })
+        if (!user) return next(createHttpError(400, 'Invalid request.'))
+        res.send(user)
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
 export default usersRouter

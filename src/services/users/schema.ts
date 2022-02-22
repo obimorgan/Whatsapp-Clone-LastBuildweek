@@ -12,7 +12,8 @@ const UserSchema = new Schema<IUser>(
         avatar: { type: String },
         firstName: { type: String },
         lastName: { type: String },
-        contacts: [{ type: Schema.Types.ObjectId }],
+        contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+        conversations: [{ type: Schema.Types.ObjectId, ref: 'Conversation' }],
         refreshJWTs: [{ type: String }],
         filename: { type: String }
     },
