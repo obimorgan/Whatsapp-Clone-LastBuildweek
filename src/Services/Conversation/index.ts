@@ -7,14 +7,15 @@ const conversationRouter = Router()
 
 conversationRouter.post('/', parser.single('conversationImg'), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {content} = req.body
-        const conversation = await new conversationModel({...req.body,
+        const { content } = req.body
+        const conversation = await new conversationModel({
+            ...req.body,
             image: req.file?.path,
             filename: req.file?.filename
         }).save()
         console.log(conversation)
         res.status(201).send(conversation)
-    } catch (error) {   
+    } catch (error) {
         console.log(error)
         next(error)
     }
@@ -23,7 +24,7 @@ conversationRouter.post('/', parser.single('conversationImg'), async (req: Reque
 conversationRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const conversation = await conversationModel.find()
-        if(conversation)
+        if (conversation)
             res.send(conversation)
         else {
             return next(createHttpError(404, 'Could not find chats'))
@@ -36,7 +37,7 @@ conversationRouter.get('/', async (req: Request, res: Response, next: NextFuncti
 conversationRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const conversation = await conversationModel.findByIdAndDelete(req.params.id,)
-        if(conversation)
+        if (conversation)
             res.send()
         else {
             return next(createHttpError(404, 'Could not find chats'))

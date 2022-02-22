@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
-import UserModel from '../Services/users/schema'
+import UserModel from '../services/users/schema'
 import { IJWTPayload, IUser } from '../users'
 
 process.env.TS_NODE_DEV && require("dotenv").config()
