@@ -1,12 +1,29 @@
 import server from "./server";
 import mongoose from "mongoose";
 import { createServer } from 'http'
-import { Server } from 'socket-io'
+import { Server } from 'socket.io'
 
 process.env.TS_NODE_DEV && require("dotenv").config()
 const { MONGO_CONNECTION, PORT } = process.env
 
 const httpServer = createServer(server)
+const io = new Server(httpServer, {})
+
+io.on('connection', (socket) => {
+  socket.on('setRecipient', ({ conversationId }) => {
+    socket.join(conversationId)
+  })
+  socket.on('sendMessage', ({ messageContent, conversationId }) => {
+    try {
+      socket.to(conversationId).emit('message', messageContent)
+    } catch (error) {
+      console.log(error)
+    }
+  })
+  socket.on('disconnect', () => {
+    io.disconnectSockets()
+  })
+})
 
 mongoose.connect(MONGO_CONNECTION!);
 

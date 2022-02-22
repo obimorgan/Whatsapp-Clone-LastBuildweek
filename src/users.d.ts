@@ -1,4 +1,4 @@
-import { Document, Model } from 'mongoose'
+import { Document, Model, Types } from 'mongoose'
 
 export interface IUser extends Document {
     _id: string,
@@ -7,9 +7,10 @@ export interface IUser extends Document {
     password: string
     firstName: string
     lastName: string
+    contacts: Types.ObjectId[]
     avatar: string
     refreshJWTs: string[]
-    filename: string,
+    filename: string
 }
 
 export interface IUserModel extends Model<IUser> {
