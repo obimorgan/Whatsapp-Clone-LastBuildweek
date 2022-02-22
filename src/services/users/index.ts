@@ -81,7 +81,7 @@ usersRouter.put('/me', JWTAuth, parser.single('userAvatar'), async (req: Request
                 const body = { ...req.body, avatar: req.file?.path || oldUser.avatar, filename: req.file?.filename || oldUser.filename }
                 const editedUser = await UserModel.findByIdAndUpdate(req.payload._id, body, { new: true })
                 if (!editedUser) return next(createHttpError(404, `User with id ${req.payload._id} does not exist.`))
-                if (oldUser && req.file) {
+                if (oldUser.filename && req.file) {
                     await cloudinary.uploader.destroy(oldUser.filename)
                 }
                 res.send(editedUser)
