@@ -10,7 +10,7 @@ export interface IUser extends Document {
     contacts: Types.ObjectId[]
     conversations: Types.ObjectId[]
     avatar: string
-    refreshJWTs: string[]
+    refreshJWT: string
     filename: string
 }
 
