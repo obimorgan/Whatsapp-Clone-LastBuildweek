@@ -14,9 +14,9 @@ const UserSchema = new Schema<IUser>(
         lastName: { type: String },
         contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
         conversations: [{ type: Schema.Types.ObjectId, ref: 'Conversation' }],
-        status: { type: String, default: "I'm busy"},
+        status: { type: String, default: "I'm busy" },
         lastSeen: { type: Date, default: Date.now() },
-        refreshJWTs: [{ type: String }],
+        refreshJWT: { type: String },
         filename: { type: String }
     },
     { timestamps: true }

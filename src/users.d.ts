@@ -12,7 +12,7 @@ export interface IUser extends Document {
     avatar: string
     status: string
     lastSeen: date
-    refreshJWTs: string[]
+    refreshJWT: string
     filename: string
 }
 

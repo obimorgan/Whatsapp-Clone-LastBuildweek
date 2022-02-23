@@ -24,7 +24,7 @@ const generateRefreshJWT = (payload: IJWTPayload): Promise<string> => {
 export const provideTokens = async (user: IUser) => {
     const accessJWT = await generateJWT({ _id: user._id, email: user.email })
     const refreshJWT = await generateRefreshJWT({ _id: user._id, email: user.email })
-    user.refreshJWTs.push(refreshJWT)
+    user.refreshJWT = refreshJWT
     await user.save()
     return { accessJWT, refreshJWT }
 }
@@ -48,15 +48,10 @@ export const verifyJWTsAndRegenerate = async (currentRefreshJWT: string) => {
         const payload = await verifyRefreshJWT(currentRefreshJWT)
         const user = await UserModel.findById(payload._id)
         if (!user) throw createHttpError(404, `User with id ${payload._id} does not exist.`)
-        if (user.refreshJWTs.includes(currentRefreshJWT)) {
-            const { accessJWT, refreshJWT } = await provideTokens(user)
-            const newRefreshTokens = user.refreshJWTs.filter(token => token !== currentRefreshJWT)
-            user.refreshJWTs = newRefreshTokens
-            await user.save()
-            return { accessJWT, refreshJWT }
-        } else {
-            throw createHttpError(401, 'Invalid refresh token.')
-        }
+        const { accessJWT, refreshJWT } = await provideTokens(user)
+        user.refreshJWT = refreshJWT
+        await user.save()
+        return { accessJWT, refreshJWT }
     } catch (error) {
         throw createHttpError(401, 'Invalid refresh token.')
     }
