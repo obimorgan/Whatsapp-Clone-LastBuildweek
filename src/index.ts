@@ -12,13 +12,7 @@ const io = new Server(httpServer, {})
 io.on('connection', (socket) => {
   socket.on('sendMessage', ({ messageContent, conversationId }) => {
     try {
-      socket.to(conversationId).emit('message', messageContent)
-    } catch (error) {
-      console.log(error)
-    }
-  })
-  socket.on('receiveMessage', ({ messageContent, conversationId }) => {
-    try {
+      console.log(messageContent)
       socket.to(conversationId).emit('message', messageContent)
     } catch (error) {
       console.log(error)
