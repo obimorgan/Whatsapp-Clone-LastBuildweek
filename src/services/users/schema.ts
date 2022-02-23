@@ -14,6 +14,8 @@ const UserSchema = new Schema<IUser>(
         lastName: { type: String },
         contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
         conversations: [{ type: Schema.Types.ObjectId, ref: 'Conversation' }],
+        status: { type: String, default: "I'm busy"},
+        lastSeen: { type: Date, default: Date.now() },
         refreshJWTs: [{ type: String }],
         filename: { type: String }
     },
@@ -35,6 +37,7 @@ UserSchema.methods.toJSON = function () {
     const userObj = userDocument.toObject()
     delete userObj.password
     delete userObj.__v
+    delete userObj.refreshJWTs
     return userObj
 }
 

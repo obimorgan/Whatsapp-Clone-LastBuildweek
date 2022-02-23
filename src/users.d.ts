@@ -10,8 +10,16 @@ export interface IUser extends Document {
     contacts: Types.ObjectId[]
     conversations: Types.ObjectId[]
     avatar: string
+    status: string
+    lastSeen: date
     refreshJWTs: string[]
     filename: string
+}
+
+export interface IConversationPopulate {
+    _id: string
+    members: Types.ObjectId[]
+    chatHistory: strinf[]
 }
 
 export interface IUserModel extends Model<IUser> {
