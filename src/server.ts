@@ -7,7 +7,7 @@ import conversationRouter from "./services/conversation/index"
 import { JWTAuth } from "./middlewares/JWTAuth"
 
 const server = express()
-server.use(cors({ origin: 'http//:localhost:3000', credentials: true }))
+server.use(cors({ origin: 'http://localhost:3000', credentials: true }))
 server.use(express.json())
 server.use(cookieParser())
 

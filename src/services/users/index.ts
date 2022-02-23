@@ -60,6 +60,15 @@ usersRouter.get('/', JWTAuth, async (req: Request, res: Response, next: NextFunc
     }
 })
 
+usersRouter.get('/everyone-else', JWTAuth, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const users = await UserModel.find({ _id: { $ne: req.payload?._id } }).sort({ username: 'asc' })
+        res.send(users)
+    } catch (error) {
+        next(error)
+    }
+})
+
 usersRouter.get('/me', JWTAuth, async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (req.payload) {
@@ -105,6 +114,19 @@ usersRouter.delete('/me', JWTAuth, async (req: Request, res: Response, next: Nex
                 await cloudinary.uploader.destroy(deletedUser.filename)
             }
             res.status(204).send()
+        } else {
+            next(createHttpError(400, 'Invalid request.'))
+        }
+    } catch (error) {
+        next(error)
+    }
+})
+
+usersRouter.get('/me/contacts', JWTAuth, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (req.payload) {
+            const user = await UserModel.findById(req.payload._id, { contacts: 1, _id: 0 }).populate('contacts')
+            user ? res.send(user.contacts) : next(createHttpError(404, `User with id ${req.payload._id} does not exist.`))
         } else {
             next(createHttpError(400, 'Invalid request.'))
         }
