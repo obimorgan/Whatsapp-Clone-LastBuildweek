@@ -4,6 +4,7 @@ import { provideTokens, verifyJWTsAndRegenerate } from '../../auth/functions'
 import { JWTAuth } from '../../middlewares/JWTAuth'
 import { cloudinary, parser } from '../../utils/cloudinary'
 import UserModel from './schema'
+import conversationModel from '../conversation/schema'
 
 const usersRouter = express.Router()
 
@@ -72,7 +73,7 @@ usersRouter.get('/everyone-else', JWTAuth, async (req: Request, res: Response, n
 usersRouter.get('/me', JWTAuth, async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (req.payload) {
-            const user = await UserModel.findById(req.payload._id)
+            const user = await UserModel.findById(req.payload._id).populate({ path: 'conversations', populate: { path: 'members' }})
             user ? res.send(user) : next(createHttpError(404, `User with id ${req.payload._id} does not exist.`))
         } else {
             next(createHttpError(400, 'Invalid request.'))
@@ -135,10 +136,26 @@ usersRouter.get('/me/contacts', JWTAuth, async (req: Request, res: Response, nex
     }
 })
 
+usersRouter.get('/me/conversations', JWTAuth, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (req.payload) {
+            const conversations = await conversationModel.find({}, { members: 1, _id: 0}).populate('members')
+            if (!conversations) return next(createHttpError(404, `conversations with id ${req.payload._id} does not exist.`))
+            res.send(conversations)
+        } else {
+            next(createHttpError(400, 'Invalid request.'))
+        }
+    } catch (error) {
+        next(error)
+    }
+})
+
 usersRouter.post('/contact', JWTAuth, async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const userToAdd = await UserModel.findOne({ email: req.body.email })
+        if (!userToAdd) return next(createHttpError(404, 'user not found'))
         const user = await UserModel.findByIdAndUpdate(req.payload?._id, {
-            $push: { contacts: req.body.contactId }
+            $push: { contacts: userToAdd._id }
         }, { new: true, runValidators: true })
         if (!user) return next(createHttpError(400, 'Invalid request.'))
         res.send(user)

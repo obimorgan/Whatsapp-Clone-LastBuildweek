@@ -24,7 +24,10 @@ const conversationRouter = Router()
 
 conversationRouter.post('/newConvo', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const conversation = await new conversationModel().save()
+        const previousConversation = await conversationModel.find()
+        const conversation = await new conversationModel({
+            members: [req.payload?._id, req.body.recipientId]
+        }).save()
         if (!conversation) return next(createHttpError(400, 'Invalid request.'))
         
         const sender = await UserModel.findByIdAndUpdate(req.payload?._id, { $push: { conversations: conversation._id },},
