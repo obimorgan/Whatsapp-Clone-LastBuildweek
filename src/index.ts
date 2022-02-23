@@ -17,6 +17,13 @@ io.on('connection', (socket) => {
       console.log(error)
     }
   })
+  socket.on('receiveMessage', ({ messageContent, conversationId }) => {
+    try {
+      socket.to(conversationId).emit('message', messageContent)
+    } catch (error) {
+      console.log(error)
+    }
+  })
   socket.on('joinGroupChat', ({ groupId }) => {
     socket.join(groupId)
   })
