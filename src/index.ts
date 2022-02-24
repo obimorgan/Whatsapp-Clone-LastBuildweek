@@ -9,22 +9,18 @@ const { MONGO_CONNECTION, PORT } = process.env
 const httpServer = createServer(server)
 const io = new Server(httpServer, {})
 
-io.on('connection', (socket) => {
-  socket.emit('newConnection', (socket.id))
-  socket.on('sendMessage', ({ messageContent, conversationId }) => {
-    try {
-      console.log(messageContent, conversationId)
-      socket.broadcast.emit('message', messageContent)
-    } catch (error) {
-      console.log(error)
-    }
+io.on('connection', socket => {
+
+  socket.on('newConnection', ({ room }) => {
+    socket.join(room)
   })
-  socket.on('joinRoom', ({ conversationId }) => {
-    socket.join(conversationId)
+
+  socket.on('sendMessage', ({ messageContent, room }) => {
+    socket.to(room).emit('message', messageContent)
   })
-  socket.on('disconnect', () => {
-    io.disconnectSockets()
-  })
+
+  socket.on('disconnect', () => console.log('disconnected'))
+
 })
 
 mongoose.connect(MONGO_CONNECTION!);
