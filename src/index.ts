@@ -15,9 +15,9 @@ io.on('connection', socket => {
     socket.join(room)
   })
 
-  socket.on('sendMessage', ({ messageContent, conversationId }) => {
+  socket.on('sendMessage', ({ messageContent, conversationId, senderId }) => {
     console.log(`Server sending message to ${conversationId}`);
-    socket.to(conversationId).emit('receiveMessage', messageContent)
+    socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId }))
   })
 
   socket.on('disconnect', () => console.log('disconnected'))
