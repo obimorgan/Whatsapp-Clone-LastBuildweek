@@ -14,6 +14,7 @@ export interface IUser extends Document {
     lastSeen: date
     refreshJWT: string
     filename: string
+    facebookId: string
 }
 
 export interface IConversationPopulate {
@@ -36,4 +37,13 @@ export interface IReqUser {
         accessJWT: string
         refreshJWT: string
     }
+}
+
+export interface INewUser {
+    id: any;
+    name: any;
+    firstName: string
+    lastName: string
+    email: any
+    facebookId: string
 }

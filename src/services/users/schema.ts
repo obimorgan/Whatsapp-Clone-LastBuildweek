@@ -17,7 +17,8 @@ const UserSchema = new Schema<IUser>(
         status: { type: String, default: "I'm busy" },
         lastSeen: { type: Date, default: Date.now() },
         refreshJWT: { type: String },
-        filename: { type: String }
+        filename: { type: String },
+        facebookId: String
     },
     { timestamps: true }
 )

@@ -1,3 +1,4 @@
+import facebookStrategy from "./auth/facebookOauth"
 import { IJWTPayload } from "./users"
 
 declare module 'express-serve-static-core' {
@@ -14,3 +15,14 @@ namespace Express {
 }
 
 declare module 'query-to-mongo'
+
+namespace facebookStrategy {
+    type UserField =
+        | 'id'
+        | 'email'
+        | 'first_name'
+        | 'last_name'
+        | 'name';
+    type User = any; 
+
+}
