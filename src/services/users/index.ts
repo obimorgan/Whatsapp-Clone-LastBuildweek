@@ -17,6 +17,9 @@ usersRouter.post('/register', parser.single('userAvatar'), async (req: Request, 
             filename: req.file?.filename
         })
         await newUser.save()
+        const { accessJWT, refreshJWT } = await provideTokens(newUser)
+            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: false })
+            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: false })
         res.status(201).send(newUser)
     } catch (error) {
         next(error)
@@ -31,7 +34,7 @@ usersRouter.post('/login', async (req: Request, res: Response, next: NextFunctio
             const { accessJWT, refreshJWT } = await provideTokens(user)
             res.cookie('accessToken', accessJWT, { httpOnly: true, secure: false })
             res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: false })
-            res.send()
+            res.send('Tokens Sent')
         } else {
             next(createHttpError(401, 'Invalid credentials.'))
         }
@@ -46,7 +49,7 @@ usersRouter.post('/refreshToken', async (req: Request, res: Response, next: Next
         const { accessJWT, refreshJWT } = await verifyJWTsAndRegenerate(refreshToken)
         res.cookie('accessToken', accessJWT, { httpOnly: true, secure: false })
         res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: false })
-        res.send()
+        res.send('Tokens Sent')
     } catch (error) {
         next(error)
     }

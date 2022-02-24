@@ -9,7 +9,8 @@ const messageSchema = new Schema<IConversation>({
 
 const conversationSchema = new Schema({
 	members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-	chatHistory: [messageSchema]
+	chatHistory: [messageSchema],
+	name: { type: String, required: true }
 })
 
 const conversationModel = model("Conversation", conversationSchema)

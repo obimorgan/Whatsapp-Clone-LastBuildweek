@@ -5,6 +5,4 @@ interface IConversation {
 	image?: string
 	text?: string
 	_id: string
-	createdAt: date
-	updatedAt: date
 }

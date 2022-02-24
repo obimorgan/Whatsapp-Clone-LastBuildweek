@@ -24,9 +24,16 @@ const conversationRouter = Router()
 
 conversationRouter.post('/newConvo', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const previousConversation = await conversationModel.find()
+        const user = await UserModel.findById(req.body.recipientId)
+        if (!user) return next(createHttpError(404, 'Invalid Recipient.'))
+        const previousConversations = await conversationModel.find()
+        const oldConvo = previousConversations.filter(convo => {
+            if (convo.members.length === 2 && (convo.members[0] === user._id || req.payload?._id) && (convo.members[1] === user._id || req.payload?._id)) return convo
+        })
+        if (previousConversations.length > 0) return res.status(202).send(oldConvo[0])
         const conversation = await new conversationModel({
-            members: [req.payload?._id, req.body.recipientId]
+            members: [req.payload?._id, user._id],
+            name: user.username
         }).save()
         if (!conversation) return next(createHttpError(400, 'Invalid request.'))
         
@@ -34,11 +41,11 @@ conversationRouter.post('/newConvo', async (req: Request, res: Response, next: N
             { new: true, runValidators: true })
         if (!sender) return next(createHttpError(400, 'Invalid request.'))
         
-        const recipient = await UserModel.findByIdAndUpdate(req.body.recipientId, {$push: { conversations: conversation._id },}, 
+        const recipient = await UserModel.findByIdAndUpdate(user._id, {$push: { conversations: conversation._id },}, 
             { new: true, runValidators: true })
         if (!recipient) return next(createHttpError(400, 'Invalid request.'))
         
-        res.send({ sender, recipient })
+        res.send(conversation)
     } catch (error) {
         console.log(error)
         next(error)
