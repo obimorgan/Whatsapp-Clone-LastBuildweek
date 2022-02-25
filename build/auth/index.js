@@ -20,9 +20,9 @@ oauthRouter.get('/', passport_1.default.authenticate('facebook', { scope: "email
 oauthRouter.get('/callback', passport_1.default.authenticate('facebook', { failureRedirect: `${FE_URL}/register` }), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(req.user);
-        res.cookie('accessToken', req.user.tokens.accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: "none" });
-        res.cookie('refreshToken', req.user.tokens.refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: "none" });
-        res.cookie('facebookId', req.user.facebookId, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: "none" });
+        res.cookie('accessToken', req.user.tokens.accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: NODE_ENV === "production" ? "none" : undefined });
+        res.cookie('refreshToken', req.user.tokens.refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: NODE_ENV === "production" ? "none" : undefined });
+        res.cookie('facebookId', req.user.facebookId, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: NODE_ENV === "production" ? "none" : undefined });
         res.redirect(`${FE_URL}/facebook`);
     }
     catch (error) {

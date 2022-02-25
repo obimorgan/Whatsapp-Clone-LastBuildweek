@@ -35,7 +35,7 @@ io.on('connection', socket => {
                         sentAt
                     }
                 }
-            });
+            }, { new: true });
             console.log(conversations);
             socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId, sentAt }));
         }
