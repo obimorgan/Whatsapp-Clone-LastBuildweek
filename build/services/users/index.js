@@ -28,8 +28,8 @@ usersRouter.post('/register', cloudinary_1.parser.single('userAvatar'), (req, re
         const newUser = new schema_1.default(Object.assign(Object.assign({}, req.body), { avatar: ((_a = req.file) === null || _a === void 0 ? void 0 : _a.path) || `https://ui-avatars.com/api/?name=${firstName}+${lastName}`, filename: (_b = req.file) === null || _b === void 0 ? void 0 : _b.filename }));
         yield newUser.save();
         const { accessJWT, refreshJWT } = yield (0, functions_1.provideTokens)(newUser);
-        res.cookie('accessToken', accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false });
-        res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false });
+        res.cookie('accessToken', accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: "none" });
+        res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: "none" });
         res.status(201).send(newUser);
     }
     catch (error) {
@@ -42,8 +42,8 @@ usersRouter.post('/login', (req, res, next) => __awaiter(void 0, void 0, void 0,
         const user = yield schema_1.default.authenticate(email, password);
         if (user) {
             const { accessJWT, refreshJWT } = yield (0, functions_1.provideTokens)(user);
-            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: true });
-            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: true });
+            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: "none" });
+            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: "none" });
             res.send('Tokens Sent');
         }
         else {
@@ -81,8 +81,8 @@ usersRouter.post('/refreshToken', (req, res, next) => __awaiter(void 0, void 0, 
     try {
         const { refreshToken } = req.cookies;
         const { accessJWT, refreshJWT } = yield (0, functions_1.verifyJWTsAndRegenerate)(refreshToken);
-        res.cookie('accessToken', accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false });
-        res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false });
+        res.cookie('accessToken', accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: "none" });
+        res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false, sameSite: "none" });
         res.send('Tokens Sent');
     }
     catch (error) {
