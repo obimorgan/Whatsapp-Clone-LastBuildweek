@@ -15,7 +15,19 @@ const auth_1 = __importDefault(require("./auth"));
 const passport_1 = __importDefault(require("passport"));
 passport_1.default.use('facebook', facebookOauth_1.default);
 const server = (0, express_1.default)();
-server.use((0, cors_1.default)({ origin: 'http://localhost:3000', credentials: true }));
+const whitelist = ['http://localhost:3000', 'https://strive-bw-4.vercel.app'];
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+};
+server.use((0, cors_1.default)(corsOptions));
 server.use(express_1.default.json());
 server.use((0, cookie_parser_1.default)());
 server.use(passport_1.default.initialize());
