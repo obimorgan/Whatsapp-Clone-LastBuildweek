@@ -51,19 +51,19 @@ conversationRouter.post('/newConvo', async (req: Request, res: Response, next: N
     }
 })
 
-// conversationRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const conversation = await conversationModel.find()
-//         if (conversation)
-//             res.send(conversation)
-//         else {
-//             return next(createHttpError(404, 'Could not find chats'))
-//         }
-//     } catch (error) {
-//         console.log(error)
-//         next(error)
-//     }
-// })
+conversationRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const conversation = await conversationModel.findById(req.params.id)
+        if (conversation)
+            res.send(conversation)
+        else {
+            return next(createHttpError(404, 'Could not find chats'))
+        }
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
 
 conversationRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {

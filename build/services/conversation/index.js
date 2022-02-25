@@ -65,19 +65,20 @@ conversationRouter.post('/newConvo', (req, res, next) => __awaiter(void 0, void 
         next(error);
     }
 }));
-// conversationRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const conversation = await conversationModel.find()
-//         if (conversation)
-//             res.send(conversation)
-//         else {
-//             return next(createHttpError(404, 'Could not find chats'))
-//         }
-//     } catch (error) {
-//         console.log(error)
-//         next(error)
-//     }
-// })
+conversationRouter.get('/:id', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const conversation = yield schema_1.default.findById(req.params.id);
+        if (conversation)
+            res.send(conversation);
+        else {
+            return next((0, http_errors_1.default)(404, 'Could not find chats'));
+        }
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+}));
 conversationRouter.delete('/:id', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _c;
     try {
