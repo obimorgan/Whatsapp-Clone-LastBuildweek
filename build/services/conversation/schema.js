@@ -4,7 +4,8 @@ const mongoose_1 = require("mongoose");
 const messageSchema = new mongoose_1.Schema({
     sender: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
     image: String,
-    text: String
+    text: String,
+    sentAt: Date
 });
 const conversationSchema = new mongoose_1.Schema({
     members: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
