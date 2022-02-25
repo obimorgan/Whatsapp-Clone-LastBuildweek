@@ -1,4 +1,5 @@
 import { Document, Model, Types } from 'mongoose'
+import { IConversation } from './chats';
 
 export interface IUser extends Document {
     _id: string,
@@ -20,7 +21,7 @@ export interface IUser extends Document {
 export interface IConversationPopulate {
     _id: string
     members: Types.ObjectId[]
-    chatHistory: strinf[]
+    chatHistory: IConversation[]
 }
 
 export interface IUserModel extends Model<IUser> {

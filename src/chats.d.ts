@@ -1,8 +1,9 @@
-import {Types} from 'mongoose'
+import { Types } from 'mongoose'
 
 interface IConversation {
 	sender: Types.ObjectId
 	image?: string
 	text?: string
-	_id: string
+	_id: string,
+	sentAt: date
 }

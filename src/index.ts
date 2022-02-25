@@ -2,6 +2,7 @@ import server from "./server";
 import mongoose from "mongoose";
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import conversationModel from "./services/conversation/schema";
 
 process.env.TS_NODE_DEV && require("dotenv").config()
 const { MONGO_CONNECTION, PORT } = process.env
@@ -15,9 +16,21 @@ io.on('connection', socket => {
     socket.join(room)
   })
 
-  socket.on('sendMessage', ({ messageContent, conversationId, senderId, sentAt }) => {
-    console.log(`Server sending message to ${conversationId}`);
-    socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId, sentAt }))
+  socket.on('sendMessage', async ({ messageContent, conversationId, senderId, sentAt }) => {
+    try {
+      await conversationModel.findByIdAndUpdate({ _id: conversationId }, {
+        $push: {
+          chatHistory: {
+            sender: senderId,
+            text: messageContent,
+            sentAt
+          }
+        }
+      })
+      socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId, sentAt }))
+    } catch (error) {
+      console.log(error)
+    }
   })
 
   socket.on('disconnect', () => console.log('disconnected'))
