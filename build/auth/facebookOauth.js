@@ -21,7 +21,7 @@ const { FACEBOOK_APP_SECRET, FACEBOOK_APP_ID } = process.env;
 const facebookStrategy = new passport_facebook_1.default.Strategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:3001/auth/facebook/callback",
+    callbackURL: "https://whatsapp-strive-buildweek4.herokuapp.com/auth/facebook/callback",
     profileFields: ['id', 'email', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified']
 }, (token, token2, profile, passportNext) => __awaiter(void 0, void 0, void 0, function* () {
     try {

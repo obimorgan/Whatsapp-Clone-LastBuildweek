@@ -12,7 +12,7 @@ const facebookStrategy = new FacebookStrategy.Strategy(
     {
         clientID: FACEBOOK_APP_ID!,
         clientSecret: FACEBOOK_APP_SECRET!,
-        callbackURL: "http://localhost:3001/auth/facebook/callback",
+        callbackURL: "https://whatsapp-strive-buildweek4.herokuapp.com£/auth/facebook/callback",
         profileFields: ['id', 'email', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified']
     },
     async (token: string, token2: string, profile: any, passportNext: any) => {
