@@ -8,6 +8,8 @@ import conversationModel from '../conversation/schema'
 
 const usersRouter = express.Router()
 
+const { NODE_ENV } = process.env 
+
 usersRouter.post('/register', parser.single('userAvatar'), async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { firstName, lastName } = req.body
@@ -18,8 +20,8 @@ usersRouter.post('/register', parser.single('userAvatar'), async (req: Request, 
         })
         await newUser.save()
         const { accessJWT, refreshJWT } = await provideTokens(newUser)
-            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: false })
-            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: false })
+            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false })
+            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false })
         res.status(201).send(newUser)
     } catch (error) {
         next(error)
@@ -32,8 +34,8 @@ usersRouter.post('/login', async (req: Request, res: Response, next: NextFunctio
         const user = await UserModel.authenticate(email, password)
         if (user) {
             const { accessJWT, refreshJWT } = await provideTokens(user)
-            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: false })
-            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: false })
+            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false })
+            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false })
             res.send('Tokens Sent')
         } else {
             next(createHttpError(401, 'Invalid credentials.'))
@@ -67,8 +69,8 @@ usersRouter.post('/refreshToken', async (req: Request, res: Response, next: Next
     try {
         const { refreshToken } = req.cookies
         const { accessJWT, refreshJWT } = await verifyJWTsAndRegenerate(refreshToken)
-        res.cookie('accessToken', accessJWT, { httpOnly: true, secure: false })
-        res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: false })
+        res.cookie('accessToken', accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false })
+        res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false })
         res.send('Tokens Sent')
     } catch (error) {
         next(error)

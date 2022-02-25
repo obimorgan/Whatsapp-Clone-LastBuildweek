@@ -14,15 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const passport_1 = __importDefault(require("passport"));
-const { FE_URL } = process.env;
+const { FE_URL, NODE_ENV } = process.env;
 const oauthRouter = express_1.default.Router();
 oauthRouter.get('/', passport_1.default.authenticate('facebook', { scope: "email" }));
 oauthRouter.get('/callback', passport_1.default.authenticate('facebook', { failureRedirect: `${FE_URL}/register` }), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(req.user);
-        res.cookie('accessToken', req.user.tokens.accessJWT, { httpOnly: true, secure: false });
-        res.cookie('refreshToken', req.user.tokens.refreshJWT, { httpOnly: true, secure: false });
-        res.cookie('facebookId', req.user.facebookId, { httpOnly: true, secure: false });
+        res.cookie('accessToken', req.user.tokens.accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false });
+        res.cookie('refreshToken', req.user.tokens.refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false });
+        res.cookie('facebookId', req.user.facebookId, { httpOnly: true, secure: NODE_ENV === "production" ? true : false });
         res.redirect(`${FE_URL}/facebook`);
     }
     catch (error) {
