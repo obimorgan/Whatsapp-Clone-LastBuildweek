@@ -42,8 +42,8 @@ usersRouter.post('/login', (req, res, next) => __awaiter(void 0, void 0, void 0,
         const user = yield schema_1.default.authenticate(email, password);
         if (user) {
             const { accessJWT, refreshJWT } = yield (0, functions_1.provideTokens)(user);
-            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false });
-            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: NODE_ENV === "production" ? true : false });
+            res.cookie('accessToken', accessJWT, { httpOnly: true, secure: true });
+            res.cookie('refreshToken', refreshJWT, { httpOnly: true, secure: true });
             res.send('Tokens Sent');
         }
         else {
