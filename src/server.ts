@@ -11,7 +11,18 @@ import passport from 'passport'
 
 passport.use('facebook', facebookStrategy)
 const server = express()
-server.use(cors({ origin: 'http://localhost:3000', credentials: true }))
+const whitelist = ['http://localhost:3000', 'https://strive-bw-4.vercel.app']
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+    },
+    credentials: true
+}
+server.use(cors(corsOptions))
 server.use(express.json())
 server.use(cookieParser())
 server.use(passport.initialize())
