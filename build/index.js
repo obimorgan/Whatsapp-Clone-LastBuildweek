@@ -27,7 +27,7 @@ io.on('connection', socket => {
     });
     socket.on('sendMessage', ({ messageContent, conversationId, senderId, sentAt }) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            yield schema_1.default.findByIdAndUpdate({ _id: conversationId }, {
+            const conversations = yield schema_1.default.findByIdAndUpdate({ _id: conversationId }, {
                 $push: {
                     chatHistory: {
                         sender: senderId,
@@ -36,6 +36,7 @@ io.on('connection', socket => {
                     }
                 }
             });
+            console.log(conversations);
             socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId, sentAt }));
         }
         catch (error) {
