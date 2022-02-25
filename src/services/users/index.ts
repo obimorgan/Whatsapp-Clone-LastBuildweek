@@ -43,6 +43,26 @@ usersRouter.post('/login', async (req: Request, res: Response, next: NextFunctio
     }
 })
 
+usersRouter.post('/facebook-login', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.cookies.facebookId) {
+        next(createHttpError(401, 'No access token provided in cookies.'))
+    } else {
+        try {
+            const token = req.cookies.facebookId
+            const user = await UserModel.findOne({ facebookId: token })
+            if (!user) return next(createHttpError(404, "No user"))
+            res.send(user)
+        } catch (error) {
+            next(createHttpError(401, 'Invalid token in cookies.'))
+        }
+    }
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
 usersRouter.post('/refreshToken', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { refreshToken } = req.cookies

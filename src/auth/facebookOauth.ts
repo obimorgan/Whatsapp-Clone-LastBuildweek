@@ -12,26 +12,28 @@ const facebookStrategy = new FacebookStrategy.Strategy(
     {
         clientID: FACEBOOK_APP_ID!,
         clientSecret: FACEBOOK_APP_SECRET!,
-        callbackURL: "http://localhost:3000/auth/facebook/callback"
+        callbackURL: "http://localhost:3001/auth/facebook/callback",
+        profileFields: ['id', 'email', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified']
     },
-    async (profile: any, passportNext: any) => {
+    async (token: string, token2: string, profile: any, passportNext: any) => {
         try {
             console.log(profile)
             const user = await UserModel.findOne({ facebookId: profile.id })
             if (user) {
                 const tokens = await provideTokens(user)
-                passportNext(null, { tokens})
+                passportNext(null, { tokens, facebookId: user.facebookId})
                 // passportNext()
             } else {
                 const newUser = new UserModel({
+                    username: profile.name.givenName,
                     firstName: profile.name.givenName,
                     lastName: profile.name.familyName,
-                    email: profile.email[0].value,
-                    facebookId: profile.id,
+                    email: profile._json.email,
+                    facebookId: profile._json.id,
                 });
                 const saveNewUser = await newUser.save()
                 const tokens = await provideTokens(saveNewUser)
-                passportNext()
+                passportNext(null, {tokens, facebookId: saveNewUser.facebookId})
             }
         } catch (error) {
             console.log(error)
