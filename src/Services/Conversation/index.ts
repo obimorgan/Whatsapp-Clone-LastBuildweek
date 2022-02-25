@@ -26,17 +26,16 @@ conversationRouter.post('/newConvo', async (req: Request, res: Response, next: N
     try {
         const user = await UserModel.findById(req.body.recipientId)
         if (!user) return next(createHttpError(404, 'Invalid Recipient.'))
-        const previousConversations = await conversationModel.find()
+        const previousConversations = await conversationModel.find().populate('members')
         const oldConvo = previousConversations.filter(convo => {
-            if (convo.members.length === 2 && (convo.members[0] === user._id || req.payload?._id) && (convo.members[1] === user._id || req.payload?._id)) return convo
+            if (convo.members.length === 2 && ((convo.members[0]._id.toString() === user._id.toString() && convo.members[1]._id.toString() === req.payload?._id.toString()) || (convo.members[0]._id.toString() === req.payload?._id.toString() && convo.members[1]._id.toString() === user._id.toString()))) return convo
         })
-        if (previousConversations.length > 0) return res.status(202).send(oldConvo[0])
+        if (oldConvo.length > 0) return res.status(202).send(oldConvo[0])
         const conversation = await new conversationModel({
-            members: [req.payload?._id, user._id],
-            name: user.username
+            members: [req.payload?._id, user._id]
         }).save()
         if (!conversation) return next(createHttpError(400, 'Invalid request.'))
-        
+        const newConvo = await conversationModel.findById(conversation._id)
         const sender = await UserModel.findByIdAndUpdate(req.payload?._id, { $push: { conversations: conversation._id },},
             { new: true, runValidators: true })
         if (!sender) return next(createHttpError(400, 'Invalid request.'))
@@ -45,7 +44,7 @@ conversationRouter.post('/newConvo', async (req: Request, res: Response, next: N
             { new: true, runValidators: true })
         if (!recipient) return next(createHttpError(400, 'Invalid request.'))
         
-        res.send(conversation)
+        res.send(newConvo)
     } catch (error) {
         console.log(error)
         next(error)

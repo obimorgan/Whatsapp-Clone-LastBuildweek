@@ -161,7 +161,7 @@ usersRouter.post('/contact', JWTAuth, async (req: Request, res: Response, next: 
             $push: { contacts: userToAdd._id }
         }, { new: true, runValidators: true })
         if (!user) return next(createHttpError(400, 'Invalid request.'))
-        res.send(user)
+        res.send(userToAdd)
     } catch (error) {
         console.log(error)
         next(error)
