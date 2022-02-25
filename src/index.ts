@@ -19,7 +19,13 @@ io.on('connection', socket => {
   socket.on('sendMessage', async ({ messageContent, conversationId, senderId, sentAt }) => {
     try {
       await conversationModel.findByIdAndUpdate({ _id: conversationId }, {
-        $push: { chatHistory: messageContent }
+        $push: {
+          chatHistory: {
+            sender: senderId,
+            text: messageContent,
+            sentAt
+          }
+        }
       })
       socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId, sentAt }))
     } catch (error) {
