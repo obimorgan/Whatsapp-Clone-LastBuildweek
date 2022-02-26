@@ -35,7 +35,7 @@ conversationRouter.post('/newConvo', async (req: Request, res: Response, next: N
             members: [req.payload?._id, user._id]
         }).save()
         if (!conversation) return next(createHttpError(400, 'Invalid request.'))
-        const newConvo = await conversationModel.findById(conversation._id)
+        const newConvo = await conversationModel.findById(conversation._id).populate('members')
         const sender = await UserModel.findByIdAndUpdate(req.payload?._id, { $push: { conversations: conversation._id },},
             { new: true, runValidators: true })
         if (!sender) return next(createHttpError(400, 'Invalid request.'))
@@ -43,6 +43,32 @@ conversationRouter.post('/newConvo', async (req: Request, res: Response, next: N
         const recipient = await UserModel.findByIdAndUpdate(user._id, {$push: { conversations: conversation._id },}, 
             { new: true, runValidators: true })
         if (!recipient) return next(createHttpError(400, 'Invalid request.'))
+        
+        res.send(newConvo)
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
+conversationRouter.post('/newGroupConvo', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const conversation = await new conversationModel({
+            name: req.body.name,
+            members: [ req.payload?._id, ...req.body.memberIds]
+        }).save()
+        if (!conversation) return next(createHttpError(400, 'Invalid request.'))
+        const newConvo = await conversationModel.findById(conversation._id).populate('members')
+        
+        const sender = await UserModel.findByIdAndUpdate(req.payload?._id, { $push: { conversations: conversation._id },},
+            { new: true, runValidators: true })
+        if (!sender) return next(createHttpError(400, 'Invalid request.'))
+       
+        req.body.memberIds.forEach(async (member: string) => {
+            const recipient = await UserModel.findByIdAndUpdate(member, {$push: { conversations: conversation._id },}, 
+                { new: true, runValidators: true })
+            if (!recipient) return next(createHttpError(400, 'Invalid request.'))
+        })
         
         res.send(newConvo)
     } catch (error) {
