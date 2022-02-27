@@ -17,6 +17,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const schema_1 = __importDefault(require("./services/conversation/schema"));
+const schema_2 = __importDefault(require("./services/users/schema"));
 process.env.TS_NODE_DEV && require("dotenv").config();
 const { MONGO_CONNECTION, PORT } = process.env;
 const httpServer = (0, http_1.createServer)(server_1.default);
@@ -25,6 +26,14 @@ io.on('connection', socket => {
     socket.on('newConnection', ({ room }) => {
         socket.join(room);
     });
+    socket.on('online', ({ senderId }) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const user = yield schema_2.default.findByIdAndUpdate({ _id: senderId }, { lastSeen: 'Online' });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }));
     socket.on('sendMessage', ({ messageContent, conversationId, senderId, sentAt }) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const conversations = yield schema_1.default.findByIdAndUpdate({ _id: conversationId }, {
@@ -32,17 +41,27 @@ io.on('connection', socket => {
                     chatHistory: {
                         sender: senderId,
                         text: messageContent,
-                        sentAt
+                        sentAt,
+                        ticks: 2
                     }
+                },
+                lastMessage: {
+                    sender: senderId,
+                    text: messageContent,
+                    sentAt,
+                    ticks: 2
                 }
             }, { new: true });
-            console.log(conversations);
-            socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId, sentAt }));
+            socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId, sentAt, ticks: 2 }));
         }
         catch (error) {
             console.log(error);
         }
     }));
+    socket.on('delivered', ({ conversationId }) => {
+        console.log('here');
+        socket.to(conversationId).emit('msg-received', { conversationId });
+    });
     socket.on('disconnect', () => console.log('disconnected'));
 });
 mongoose_1.default.connect(MONGO_CONNECTION);

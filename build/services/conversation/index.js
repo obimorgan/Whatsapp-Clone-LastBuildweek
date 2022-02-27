@@ -51,13 +51,38 @@ conversationRouter.post('/newConvo', (req, res, next) => __awaiter(void 0, void 
         }).save();
         if (!conversation)
             return next((0, http_errors_1.default)(400, 'Invalid request.'));
-        const newConvo = yield schema_1.default.findById(conversation._id);
+        const newConvo = yield schema_1.default.findById(conversation._id).populate('members');
         const sender = yield schema_2.default.findByIdAndUpdate((_b = req.payload) === null || _b === void 0 ? void 0 : _b._id, { $push: { conversations: conversation._id }, }, { new: true, runValidators: true });
         if (!sender)
             return next((0, http_errors_1.default)(400, 'Invalid request.'));
         const recipient = yield schema_2.default.findByIdAndUpdate(user._id, { $push: { conversations: conversation._id }, }, { new: true, runValidators: true });
         if (!recipient)
             return next((0, http_errors_1.default)(400, 'Invalid request.'));
+        res.send(newConvo);
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+}));
+conversationRouter.post('/newGroupConvo', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c, _d;
+    try {
+        const conversation = yield new schema_1.default({
+            name: req.body.name,
+            members: [(_c = req.payload) === null || _c === void 0 ? void 0 : _c._id, ...req.body.memberIds]
+        }).save();
+        if (!conversation)
+            return next((0, http_errors_1.default)(400, 'Invalid request.'));
+        const newConvo = yield schema_1.default.findById(conversation._id).populate('members');
+        const sender = yield schema_2.default.findByIdAndUpdate((_d = req.payload) === null || _d === void 0 ? void 0 : _d._id, { $push: { conversations: conversation._id }, }, { new: true, runValidators: true });
+        if (!sender)
+            return next((0, http_errors_1.default)(400, 'Invalid request.'));
+        req.body.memberIds.forEach((member) => __awaiter(void 0, void 0, void 0, function* () {
+            const recipient = yield schema_2.default.findByIdAndUpdate(member, { $push: { conversations: conversation._id }, }, { new: true, runValidators: true });
+            if (!recipient)
+                return next((0, http_errors_1.default)(400, 'Invalid request.'));
+        }));
         res.send(newConvo);
     }
     catch (error) {
@@ -80,9 +105,9 @@ conversationRouter.get('/:id', (req, res, next) => __awaiter(void 0, void 0, voi
     }
 }));
 conversationRouter.delete('/:id', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _e;
     try {
-        const me = yield schema_2.default.findByIdAndUpdate((_c = req.payload) === null || _c === void 0 ? void 0 : _c._id, { $pull: { conversations: req.params.id } }, { new: true, runValidators: true });
+        const me = yield schema_2.default.findByIdAndUpdate((_e = req.payload) === null || _e === void 0 ? void 0 : _e._id, { $pull: { conversations: req.params.id } }, { new: true, runValidators: true });
         if (!me)
             return next((0, http_errors_1.default)(400, 'Invalid request.'));
         res.send(me);
