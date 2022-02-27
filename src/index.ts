@@ -2,7 +2,9 @@ import server from "./server";
 import mongoose from "mongoose";
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import conversationModel from "./services/conversation/schema";
+import conversationModel from "./services/conversation/schema"
+import UserModal from './services/users/schema'
+import UserModel from "./services/users/schema";
 
 process.env.TS_NODE_DEV && require("dotenv").config()
 const { MONGO_CONNECTION, PORT } = process.env
@@ -16,6 +18,14 @@ io.on('connection', socket => {
     socket.join(room)
   })
 
+  socket.on('online', async ({ senderId}) => {
+    try {
+      const user = await UserModel.findByIdAndUpdate({ _id: senderId}, { lastSeen: 'Online' })
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
   socket.on('sendMessage', async ({ messageContent, conversationId, senderId, sentAt }) => {
     try {
       const conversations = await conversationModel.findByIdAndUpdate({ _id: conversationId }, {
@@ -23,15 +33,26 @@ io.on('connection', socket => {
           chatHistory: {
             sender: senderId,
             text: messageContent,
-            sentAt
+            sentAt,
+            ticks: 2
           }
+        },
+        lastMessage: {
+          sender: senderId,
+          text: messageContent,
+          sentAt,
+          ticks: 2
         }
       }, {new: true})
-      console.log(conversations)
-      socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId, sentAt }))
+      socket.to(conversationId).emit('receiveMessage', ({ messageContent, senderId, sentAt, ticks: 2 }))
     } catch (error) {
       console.log(error)
     }
+  })
+
+  socket.on('delivered', ({ conversationId}) => {
+    console.log('here')
+    socket.to(conversationId).emit('msg-received', { conversationId })
   })
 
   socket.on('disconnect', () => console.log('disconnected'))

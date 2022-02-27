@@ -5,5 +5,6 @@ interface IConversation {
 	image?: string
 	text?: string
 	_id: string,
-	sentAt: date
+	sentAt: date,
+	ticks: number
 }

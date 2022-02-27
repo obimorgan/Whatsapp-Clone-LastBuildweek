@@ -6,16 +6,16 @@ const { Schema, model } = mongoose
 
 const UserSchema = new Schema<IUser>(
     {
-        username: { type: String, required: true },
-        email: { type: String },
-        password: { type: String },
+        username: { type: String, required: true, unique: true },
+        email: { type: String, required: true, unique: true},
+        password: { type: String, required: true },
         avatar: { type: String },
-        firstName: { type: String },
-        lastName: { type: String },
+        firstName: { type: String, required: true},
+        lastName: { type: String, required: true },
         contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
         conversations: [{ type: Schema.Types.ObjectId, ref: 'Conversation' }],
         status: { type: String, default: "I'm busy" },
-        lastSeen: { type: Date, default: Date.now() },
+        lastSeen: { type: String, default: Date.now() },
         refreshJWT: { type: String },
         filename: { type: String },
         facebookId: String
